@@ -1,0 +1,15 @@
+name: 'Get & Cache dependencies'
+description: 'Get the dependencies (via npm) and cache them'
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v3 # you can use other actions in your custom actions, and you DON'T need to specify shell
+      with:
+        path: node_modules
+        key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: npm ci
+      shell: bash # you must add this, if you are not using an action
